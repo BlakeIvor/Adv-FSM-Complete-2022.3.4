@@ -9,6 +9,7 @@ public class NPCTankController : AdvancedFSM
     public float healthScale;
     public bool inChargingArea = false;
     public float groundCheckDistance = 5f;
+    Transform restPoint;
 
     // We overwrite the deprecated built-in `rigidbody` variable.
     new private Rigidbody rigidbody;
@@ -17,9 +18,10 @@ public class NPCTankController : AdvancedFSM
     protected override void Initialize()
     {
         health = 100;
-
+        restPoint = GameObject.FindGameObjectWithTag("RechargeStation").transform;
         elapsedTime = 0.0f;
         shootRate = 2.0f;
+
 
         //Get the target enemy(Player)
         GameObject objPlayer = GameObject.FindGameObjectWithTag("Player");
@@ -112,6 +114,8 @@ public class NPCTankController : AdvancedFSM
 
         RestingState resting = new RestingState(this.transform);
         resting.AddTransition(Transition.FullHealth, FSMStateID.Patrolling);
+        resting.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        resting.AddTransition(Transition.LowHealth, FSMStateID.Resting);
 
         AddFSMState(patrol);
         AddFSMState(chase);
@@ -144,7 +148,7 @@ public class NPCTankController : AdvancedFSM
 
 
         //Reduce health
-        else if (collision.gameObject.tag == "Bullet" && this.CurrentStateID != FSMStateID.Resting)
+        else if (collision.gameObject.tag == "Bullet" && !(Vector3.Distance(transform.position, restPoint.position) < 100f && this.CurrentStateID == FSMStateID.Resting))
         {
             Debug.Log("hit");
             health -= 50;
