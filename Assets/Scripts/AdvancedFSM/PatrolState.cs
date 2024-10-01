@@ -5,6 +5,7 @@ public class PatrolState : FSMState
 {
 
     private float timer;
+    private bool timerStart = false;
     private bool camp;
 
     public PatrolState(Transform[] wp) 
@@ -35,12 +36,34 @@ public class PatrolState : FSMState
             //2. Since the distance is near, transition to chase state
             Debug.Log("Switch to Chase State");
             npc.GetComponent<NPCTankController>().SetTransition(Transition.SawPlayer);
+            timerStart = false;
+        }
+        else if (timer <= 0)
+        {
+            if (camp)
+            {
+                Debug.Log("Go ninja camp");
+                npc.GetComponent<NPCTankController>().SetTransition(Transition.ReachNinjaCamp);
+                timerStart = false;
+                camp = !camp;
+            }
+            else 
+            {
+                npc.GetComponent<NPCTankController>().SetTransition(Transition.ReachBored);
+                timerStart = false;
+                camp = !camp;
+            }
         }
 
     }
 
     public override void Act(Transform player, Transform npc)
     {
+        if (!timerStart)
+        {
+            timer = Random.Range(7.0f, 20.0f);
+            timerStart = true;
+        }
         //1. Find another random patrol point if the current point is reached
         if (Vector3.Distance(npc.position, destPos) <= 100.0f)
         {
@@ -54,6 +77,6 @@ public class PatrolState : FSMState
 
         //3. Go Forward
         npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);
-
+        timer -= Time.deltaTime;
     }
 }

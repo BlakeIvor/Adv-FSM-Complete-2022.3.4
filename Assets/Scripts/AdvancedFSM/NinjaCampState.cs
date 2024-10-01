@@ -1,15 +1,16 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class BoredState : FSMState
+public class NinjaCampState : FSMState
 {
+
     private bool timerStart = false;
     private float boredTimer;
 
-    public BoredState(Transform npc)
+    public NinjaCampState(Transform npc)
     {
-        stateID = FSMStateID.Bored;
+        stateID = FSMStateID.Camp;
         curSpeed = 0.0f;
         boredTimer = 0;
     }
@@ -56,8 +57,7 @@ public class BoredState : FSMState
             boredTimer = Random.Range(5.0f, 20.0f);
             timerStart = true;
         }
-        Transform turret = npc.gameObject.transform.GetChild(0).transform;
-        turret.Rotate(0, 45f * Time.deltaTime, 0);
+
         boredTimer -= Time.deltaTime;
     }
 }

@@ -96,6 +96,7 @@ public class NPCTankController : AdvancedFSM
         patrol.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         patrol.AddTransition(Transition.LowHealth, FSMStateID.Resting);
         patrol.AddTransition(Transition.ReachBored, FSMStateID.Bored);
+        patrol.AddTransition(Transition.ReachNinjaCamp, FSMStateID.Camp);
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
@@ -122,7 +123,14 @@ public class NPCTankController : AdvancedFSM
         bored.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         bored.AddTransition(Transition.LowHealth, FSMStateID.Resting);
         bored.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
+        bored.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
 
+        NinjaCampState camp = new NinjaCampState(this.transform);
+        camp.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
+        camp.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        camp.AddTransition(Transition.LowHealth, FSMStateID.Resting);
+        camp.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
+        camp.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
 
         AddFSMState(patrol);
         AddFSMState(chase);
@@ -130,6 +138,7 @@ public class NPCTankController : AdvancedFSM
         AddFSMState(dead);
         AddFSMState(resting);
         AddFSMState(bored);
+        AddFSMState(camp);
     }
 
     /// <summary>
