@@ -3,13 +3,27 @@ using System.Collections;
 
 public class PatrolState : FSMState
 {
+
+    private float timer;
+    private bool camp;
+
     public PatrolState(Transform[] wp) 
     { 
         waypoints = wp;
         stateID = FSMStateID.Patrolling;
-
         curRotSpeed = 1.0f;
         curSpeed = 100.0f;
+        timer = -1;
+        int prev = (int)Random.Range(1.0f, 3.0f);
+        if (prev == 1)
+        {
+            camp = true;
+        }
+        else 
+        {
+            camp = false;
+        }
+
     }
 
     public override void Reason(Transform player, Transform npc)

@@ -22,7 +22,6 @@ public class NPCTankController : AdvancedFSM
         elapsedTime = 0.0f;
         shootRate = 2.0f;
 
-
         //Get the target enemy(Player)
         GameObject objPlayer = GameObject.FindGameObjectWithTag("Player");
         playerTransform = objPlayer.transform;
@@ -96,6 +95,7 @@ public class NPCTankController : AdvancedFSM
         patrol.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
         patrol.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         patrol.AddTransition(Transition.LowHealth, FSMStateID.Resting);
+        patrol.AddTransition(Transition.ReachBored, FSMStateID.Bored);
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
@@ -117,11 +117,19 @@ public class NPCTankController : AdvancedFSM
         resting.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         resting.AddTransition(Transition.LowHealth, FSMStateID.Resting);
 
+        BoredState bored = new BoredState(this.transform);
+        bored.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
+        bored.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        bored.AddTransition(Transition.LowHealth, FSMStateID.Resting);
+        bored.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
+
+
         AddFSMState(patrol);
         AddFSMState(chase);
         AddFSMState(attack);
         AddFSMState(dead);
         AddFSMState(resting);
+        AddFSMState(bored);
     }
 
     /// <summary>
@@ -142,11 +150,6 @@ public class NPCTankController : AdvancedFSM
             Debug.Log("Pitstop");
             inChargingArea = true;
         }
-
-
-
-
-
         //Reduce health
         else if (collision.gameObject.tag == "Bullet" && !(Vector3.Distance(transform.position, restPoint.position) < 100f && this.CurrentStateID == FSMStateID.Resting))
         {

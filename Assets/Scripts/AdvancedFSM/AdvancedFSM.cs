@@ -19,6 +19,8 @@ public enum Transition
     NoHealth,
     FullHealth,
     LowHealth,
+    ReachBored,
+    ReachNinjaCamp
 }
 
 public enum FSMStateID
@@ -28,7 +30,9 @@ public enum FSMStateID
     Chasing,
     Attacking,
     Dead,
-    Resting
+    Resting,
+    Bored, 
+    Camp
 }
 
 public class AdvancedFSM : FSM 
@@ -68,7 +72,7 @@ public class AdvancedFSM : FSM
             return;
         }
 
-        // Add the state to the List if it´s not inside it
+        // Add the state to the List if itï¿½s not inside it
         foreach (FSMState state in fsmStates)
         {
             if (state.ID == fsmState.ID)
@@ -95,7 +99,7 @@ public class AdvancedFSM : FSM
             return;
         }
 
-        // Search the List and delete the state if it´s inside it
+        // Search the List and delete the state if itï¿½s inside it
         foreach (FSMState state in fsmStates)
         {
             if (state.ID == fsmState)
@@ -110,7 +114,7 @@ public class AdvancedFSM : FSM
     /// <summary>
     /// This method tries to change the state the FSM is in based on
     /// the current state and the transition passed. If current state
-    ///  doesn´t have a target state for the transition passed, 
+    ///  doesnï¿½t have a target state for the transition passed, 
     /// an ERROR message is printed.
     /// </summary>
     public void PerformTransition(Transition trans)
