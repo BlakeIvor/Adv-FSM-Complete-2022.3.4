@@ -15,6 +15,7 @@ public class PatrolState : FSMState
         curRotSpeed = 1.0f;
         curSpeed = 100.0f;
         timer = -1;
+        FindNextPoint();
         int prev = (int)Random.Range(1.0f, 3.0f);
         if (prev == 1)
         {
@@ -38,7 +39,7 @@ public class PatrolState : FSMState
             npc.GetComponent<NPCTankController>().SetTransition(Transition.SawPlayer);
             timerStart = false;
         }
-        else if (timer <= 0)
+        else if (timer <= 0 && timerStart)
         {
             if (camp)
             {

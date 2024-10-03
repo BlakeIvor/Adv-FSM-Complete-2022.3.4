@@ -46,7 +46,10 @@ public class NPCTankController : AdvancedFSM
 
     private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log(this.CurrentStateID);
+        }
     }
     //Update each frame
     protected override void FSMUpdate()
@@ -77,9 +80,6 @@ public class NPCTankController : AdvancedFSM
 
     private void ConstructFSM()
     {
-        
-
-
         //Get the list of points
         pointList = GameObject.FindGameObjectsWithTag("WandarPoint");
 
