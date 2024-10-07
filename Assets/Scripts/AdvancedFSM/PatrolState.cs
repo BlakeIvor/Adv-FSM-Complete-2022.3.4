@@ -6,7 +6,15 @@ public class PatrolState : FSMState
 
     private float timer;
     private bool timerStart = false;
-    private bool camp;
+    private enum changeTo
+    {
+        camp, 
+        bored,
+        offDuty
+
+    }
+
+    changeTo change;
 
     public PatrolState(Transform[] wp) 
     { 
@@ -16,14 +24,16 @@ public class PatrolState : FSMState
         curSpeed = 100.0f;
         timer = -1;
         FindNextPoint();
-        int prev = (int)Random.Range(1.0f, 3.0f);
-        if (prev == 1)
+        int prev = (int)Random.Range(0f, 2.0f);
+        switch (prev)
         {
-            camp = true;
-        }
-        else 
-        {
-            camp = false;
+            case 0:
+                change = changeTo.offDuty; break;
+            case 1:
+                change = changeTo.bored; break;
+            case 2:
+                change = changeTo.camp; break;
+
         }
 
     }
@@ -41,19 +51,26 @@ public class PatrolState : FSMState
         }
         else if (timer <= 0 && timerStart)
         {
-            if (camp)
+            if (change == changeTo.camp)
             {
                 Debug.Log("Go ninja camp");
                 npc.GetComponent<NPCTankController>().SetTransition(Transition.ReachNinjaCamp);
                 timerStart = false;
-                camp = !camp;
+                change = changeTo.bored;
             }
-            else 
+            else if(change == changeTo.bored)
             {
                 npc.GetComponent<NPCTankController>().SetTransition(Transition.ReachBored);
                 timerStart = false;
-                camp = !camp;
+                change = changeTo.offDuty;
             }
+            else
+            {
+                npc.GetComponent<NPCTankController>().SetTransition(Transition.GoOffDuty);
+                timerStart = false;
+                change = changeTo.camp;
+            }
+
         }
 
     }

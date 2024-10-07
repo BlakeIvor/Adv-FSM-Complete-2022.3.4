@@ -20,7 +20,9 @@ public enum Transition
     FullHealth,
     LowHealth,
     ReachBored,
-    ReachNinjaCamp
+    ReachNinjaCamp,
+    ReturnToDuty,
+    GoOffDuty,
 }
 
 public enum FSMStateID
@@ -32,7 +34,8 @@ public enum FSMStateID
     Dead,
     Resting,
     Bored, 
-    Camp
+    Camp,
+    OffDuty,
 }
 
 public class AdvancedFSM : FSM 

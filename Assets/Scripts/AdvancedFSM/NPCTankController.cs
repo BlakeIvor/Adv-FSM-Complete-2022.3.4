@@ -9,7 +9,12 @@ public class NPCTankController : AdvancedFSM
     public float healthScale;
     public bool inChargingArea = false;
     public float groundCheckDistance = 5f;
+
+
+
     Transform restPoint;
+    [SerializeField] Transform offDutyPoint;
+    [SerializeField] Transform offDutyTeleportPoint;
 
     // We overwrite the deprecated built-in `rigidbody` variable.
     new private Rigidbody rigidbody;
@@ -18,7 +23,12 @@ public class NPCTankController : AdvancedFSM
     protected override void Initialize()
     {
         health = 100;
+
+
         restPoint = GameObject.FindGameObjectWithTag("RechargeStation").transform;
+        offDutyPoint = GameObject.FindGameObjectWithTag("OffDutyPoint").transform;
+        offDutyTeleportPoint = GameObject.FindGameObjectWithTag("OffDutyTeleportPoint").transform;
+
         elapsedTime = 0.0f;
         shootRate = 2.0f;
 
@@ -97,6 +107,7 @@ public class NPCTankController : AdvancedFSM
         patrol.AddTransition(Transition.LowHealth, FSMStateID.Resting);
         patrol.AddTransition(Transition.ReachBored, FSMStateID.Bored);
         patrol.AddTransition(Transition.ReachNinjaCamp, FSMStateID.Camp);
+        patrol.AddTransition(Transition.GoOffDuty, FSMStateID.OffDuty);
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
@@ -113,7 +124,7 @@ public class NPCTankController : AdvancedFSM
         DeadState dead = new DeadState();
         dead.AddTransition(Transition.NoHealth, FSMStateID.Dead);
 
-        RestingState resting = new RestingState(this.transform);
+        RestingState resting = new RestingState(this.transform, restPoint);
         resting.AddTransition(Transition.FullHealth, FSMStateID.Patrolling);
         resting.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         resting.AddTransition(Transition.LowHealth, FSMStateID.Resting);
@@ -132,6 +143,10 @@ public class NPCTankController : AdvancedFSM
         camp.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
         camp.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
 
+        OffDutyState offduty = new OffDutyState(offDutyPoint, offDutyTeleportPoint, this.transform);
+        offduty.AddTransition(Transition.ReturnToDuty, FSMStateID.Patrolling);
+        offduty.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+
         AddFSMState(patrol);
         AddFSMState(chase);
         AddFSMState(attack);
@@ -139,6 +154,7 @@ public class NPCTankController : AdvancedFSM
         AddFSMState(resting);
         AddFSMState(bored);
         AddFSMState(camp);
+        AddFSMState(offduty);
     }
 
     /// <summary>
@@ -201,4 +217,6 @@ public class NPCTankController : AdvancedFSM
             elapsedTime = 0.0f;
         }
     }
+
+    
 }
