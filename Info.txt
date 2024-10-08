@@ -1,4 +1,5 @@
 Artificial Intelligence Assignment Info: Advanced FSM week 2
+Worked on by Jason Chen and Blake Shea
 
 Implementation of Off-Duty State
 
