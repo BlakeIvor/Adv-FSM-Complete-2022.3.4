@@ -11,6 +11,8 @@ public class NPCTankController : AdvancedFSM
     public float groundCheckDistance = 5f;
 
 
+    [SerializeField] Material material1, material2, material3, material4, material5, material6, material7;
+
 
     Transform restPoint;
     [SerializeField] Transform offDutyPoint;
@@ -61,6 +63,33 @@ public class NPCTankController : AdvancedFSM
         //Check for health
         elapsedTime += Time.deltaTime;
         
+
+
+        switch(CurrentState.ID)
+        {
+            case FSMStateID.Attacking:
+                GetComponent<Renderer>().material = material1;
+                break;
+            case FSMStateID.Chasing:
+                GetComponent<Renderer>().material = material2;
+                break;
+            case FSMStateID.Patrolling:
+                GetComponent<Renderer>().material = material3;
+                break;
+            case FSMStateID.OffDuty:
+                GetComponent<Renderer>().material = material4;
+                break;
+            case FSMStateID.Bored:
+                GetComponent<Renderer>().material = material5;
+                break;
+            case FSMStateID.Camp:
+                GetComponent<Renderer>().material = material6;
+                break;
+            case FSMStateID.Resting:
+                GetComponent<Renderer>().material = material7;
+                break;
+
+        }
         
 
     }
