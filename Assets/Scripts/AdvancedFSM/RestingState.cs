@@ -14,8 +14,8 @@ public class RestingState : FSMState
         this.npc = npc;
 
         stateID = FSMStateID.Resting;
-        curRotSpeed = 1.0f;
-        curSpeed = 100.0f;
+        curRotSpeed = 4.0f;
+        curSpeed = 600.0f;
 
     }
 

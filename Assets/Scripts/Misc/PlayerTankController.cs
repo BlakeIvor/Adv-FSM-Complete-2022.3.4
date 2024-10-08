@@ -14,6 +14,7 @@ public class PlayerTankController : MonoBehaviour
     private float turretRotSpeed = 10.0f;
     private float maxForwardSpeed = 300.0f;
     private float maxBackwardSpeed = -300.0f;
+
     
 
     //Bullet shooting rate
@@ -66,7 +67,12 @@ public class PlayerTankController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            targetSpeed = maxForwardSpeed;
+            float mult = 1f;
+            if (Input.GetKey(KeyCode.LeftShift)){
+                mult *= 3;
+            }
+
+                targetSpeed = maxForwardSpeed * mult;
         }
         else if (Input.GetKey(KeyCode.S))
         {
