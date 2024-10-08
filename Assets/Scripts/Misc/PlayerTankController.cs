@@ -112,6 +112,10 @@ public class PlayerTankController : MonoBehaviour
         {
             health -= Bullet.GetComponent<Bullet>().damage;
             healthBar.fillAmount = health / 100;
+            if (health <= 0)
+            {
+                OnEndGame();
+            }
         }
     }
 }

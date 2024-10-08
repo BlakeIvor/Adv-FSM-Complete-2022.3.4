@@ -13,5 +13,6 @@ public class UIButtons : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(0);
+        Debug.Log("PressedRestart");
     }
 }

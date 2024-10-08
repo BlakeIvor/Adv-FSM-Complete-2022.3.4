@@ -11,6 +11,11 @@ public class ScoreTracker : MonoBehaviour
     private float currTime;
     [SerializeField] Text timerText;
 
+    void Start()
+    {
+        ResetTime();
+    }
+
     // Update is called once per frame
     void Update()
     {
