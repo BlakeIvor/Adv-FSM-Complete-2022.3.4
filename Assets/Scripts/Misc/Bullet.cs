@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour
 
     public float Speed = 600.0f;
     public float LifeTime = 3.0f;
-    public int damage = 50;
+    public int damage = 30;
 
     void Start()
     {

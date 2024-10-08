@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerTankController : MonoBehaviour
 {
     public GameObject Bullet;
+    public Image healthBar;
+    public float health = 100;
 	
     private Transform Turret;
     private Transform bulletSpawnPoint;    
@@ -11,6 +14,7 @@ public class PlayerTankController : MonoBehaviour
     private float turretRotSpeed = 10.0f;
     private float maxForwardSpeed = 300.0f;
     private float maxBackwardSpeed = -300.0f;
+    
 
     //Bullet shooting rate
     protected float shootRate;
@@ -99,6 +103,15 @@ public class PlayerTankController : MonoBehaviour
                 //Also Instantiate over the PhotonNetwork
                 Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
             }
+        }
+    }
+    
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            health -= Bullet.GetComponent<Bullet>().damage;
+            healthBar.fillAmount = health / 100;
         }
     }
 }

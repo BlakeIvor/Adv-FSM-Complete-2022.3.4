@@ -14,7 +14,7 @@ public class ScoreTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SceneManager.GetActiveScene() == 1)
+        if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             if (!LevelManager.instance.gameOverPanel.activeInHierarchy)
             {

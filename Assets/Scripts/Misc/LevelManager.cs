@@ -5,9 +5,10 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] Transform tankParent;
+    [SerializeField] PlayerTankController player;
     public GameObject gameOverPanel;
 
-    public LevelManager instance { get; private set;}
+    public static LevelManager instance { get; private set;}
 
     void Awake()
     {
@@ -20,7 +21,7 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (tankParent.childCount == 0 && !gameOverPanel.activeInHierarchy)
+        if (tankParent.childCount == 0 && !gameOverPanel.activeInHierarchy || player.health <= 0)
         {
             OpenGameOverPanel();
         }
