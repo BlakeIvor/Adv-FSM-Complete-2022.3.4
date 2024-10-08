@@ -210,7 +210,8 @@ public class NPCTankController : AdvancedFSM
                 Debug.Log("Switch to Dead State");
                 SetTransition(Transition.NoHealth);
                 Explode();
-            }else if(health < 100){
+            }else if(health < 100 && RestingState.remainingRests > 0){
+                RestingState.remainingRests--;
                 Debug.Log("Switch to Resting State");
                 SetTransition(Transition.LowHealth);
             }

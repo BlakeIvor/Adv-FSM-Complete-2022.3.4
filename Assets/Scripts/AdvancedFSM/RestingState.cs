@@ -8,6 +8,7 @@ public class RestingState : FSMState
     Transform restPoint;
     float elapsedTime = 0;
     Transform npc;
+    public static float remainingRests = 8;
     public RestingState(Transform npc, Transform restPoint)
     {
         this.restPoint = restPoint;
@@ -21,6 +22,12 @@ public class RestingState : FSMState
 
     public override void Reason(Transform player, Transform npc)
     {
+        if(remainingRests <= 0) { 
+            restPoint.gameObject.SetActive(false);
+            npc.GetComponent<NPCTankController>().SetTransition(Transition.FullHealth);
+        }
+
+
         int health = npc.GetComponent<NPCTankController>().health;
         npc.GetComponent<NPCTankController>().health = (int) Mathf.Clamp(health, 0f, 100f);
         if (health >= 100f)
