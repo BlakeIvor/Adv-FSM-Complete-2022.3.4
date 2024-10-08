@@ -146,6 +146,7 @@ public class NPCTankController : AdvancedFSM
         OffDutyState offduty = new OffDutyState(offDutyPoint, offDutyTeleportPoint, this.transform);
         offduty.AddTransition(Transition.ReturnToDuty, FSMStateID.Patrolling);
         offduty.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        offduty.AddTransition(Transition.LowHealth, FSMStateID.Resting);
 
         AddFSMState(patrol);
         AddFSMState(chase);
