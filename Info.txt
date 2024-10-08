@@ -1,0 +1,17 @@
+Artificial Intelligence Assignment Info: Advanced FSM week 2
+
+Implementation of Off-Duty State
+
+1. Create new script OffDutyState.cs that inherits (and will later override functions of) FSMState.
+2. Create a list of tank transforms to find how many tanks are off duty at any one time, and a bool reachedOff that determines whether the tank has teleported away yet
+3. Create an area for the tanks to go towards to go off duty "offDutyPoint" and an area for the tank to teleport to "offDutyTeleportPoint" referenced in the NPCTankController and later fed in as part of the OffDutyState() call
+4. Implement state call "OffDutyState()" function with references to offDutyPoint, offDutyTeleportPoint, and the npc, as well as storing FSMStateID, rotationSpeed, and moveSpeed
+5. Override reason() to consider the case in which too many tanks are off duty, and the tank should continue on breaking countless labor laws
+6. Override act() to work as follows:
+	- if tank is not in the list and there are enough tanks to cover the shift -> add the tank to the list and continue
+	- if the tank is yet to teleport to offDutyTeleportPoint (!reachedOff):
+		- turn in the direction of the offDutyPoint and move towards it
+		- if it gets close enough to the offDutyPoint:
+			-teleport to the offDutyTeleportpoint
+			-begin countdown (we implemented as coroutine) for 10 seconds that when finished:
+				teleports the tank back to offDutyPoint and "returns to duty" (Sets transition to return to duty which in this case returns to patrolling)
