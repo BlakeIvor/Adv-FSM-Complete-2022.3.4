@@ -54,19 +54,13 @@ public class NPCTankController : AdvancedFSM
     }
 
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Debug.Log(this.CurrentStateID);
-        }
-    }
+    
     //Update each frame
     protected override void FSMUpdate()
     {
         //Check for health
         elapsedTime += Time.deltaTime;
-
+        
         
 
     }
@@ -214,6 +208,7 @@ public class NPCTankController : AdvancedFSM
     {
         if (elapsedTime >= shootRate)
         {
+            Debug.Log("PEW");
             Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
             elapsedTime = 0.0f;
         }

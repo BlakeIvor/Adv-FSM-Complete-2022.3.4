@@ -39,5 +39,6 @@ public class FSM : MonoBehaviour
     void FixedUpdate()
     {
         FSMFixedUpdate();
+        
     }    
 }
