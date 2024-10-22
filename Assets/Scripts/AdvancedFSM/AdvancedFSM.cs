@@ -36,6 +36,7 @@ public enum FSMStateID
     Bored, 
     Camp,
     OffDuty,
+    Camo,
 }
 
 public class AdvancedFSM : FSM 

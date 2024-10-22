@@ -19,7 +19,7 @@ public class BoredState : FSMState
 
         if (npc.GetComponent<NPCTankController>().health <= 30)
         {
-            npc.GetComponent<NPCTankController>().SetTransition(Transition.NoHealth);
+            npc.GetComponent<NPCTankController>().SetTransition(Transition.LowHealth);
             timerStart = false;
         }
 
