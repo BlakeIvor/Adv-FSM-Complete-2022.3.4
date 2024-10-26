@@ -3,6 +3,8 @@ using System.Collections;
 
 public class AttackState : FSMState
 {
+    private bool decidedAttack = false;
+    
     public AttackState(Transform[] wp) 
     { 
         waypoints = wp;
@@ -16,6 +18,22 @@ public class AttackState : FSMState
 
     public override void Reason(Transform player, Transform npc)
     {
+        if (!decidedAttack)
+        {
+            float randNum = Random.Range(0.0f, 1.0f);
+            Debug.Log(npc.gameObject + ": rolled " + randNum);
+            if (randNum <= (1.0f - npc.parent.childCount/5.0f))
+            {
+                npc.GetComponent<NPCTankController>().SetTransition(Transition.CamoAttack);
+                decidedAttack = false;
+            }
+            else
+            {
+                decidedAttack = true;
+            }
+        }
+
+
         //Check the distance with the player tank
         float dist = Vector3.Distance(npc.position, player.position);
         if (dist >= 200.0f && dist < 300.0f)
@@ -29,26 +47,31 @@ public class AttackState : FSMState
 
             Debug.Log("Switch to Chase State");
             npc.GetComponent<NPCTankController>().SetTransition(Transition.SawPlayer);
+            decidedAttack = false;
         }
         //Transition to patrol is the tank become too far
         else if (dist >= 300.0f)
         {
             Debug.Log("Switch to Patrol State");
             npc.GetComponent<NPCTankController>().SetTransition(Transition.LostPlayer);
+            decidedAttack = false;
         }  
     }
 
     public override void Act(Transform player, Transform npc)
     {
-        //Set the target position as the player position
-        destPos = player.position;
+        if (decidedAttack)
+        {
+            //Set the target position as the player position
+            destPos = player.position;
 
-        //Always Turn the turret towards the player
-        Transform turret = npc.GetComponent<NPCTankController>().turret;
-        Quaternion turretRotation = Quaternion.LookRotation(destPos - turret.position);
-        turret.rotation = Quaternion.Slerp(turret.rotation, turretRotation, Time.deltaTime * curRotSpeed);
+            //Always Turn the turret towards the player
+            Transform turret = npc.GetComponent<NPCTankController>().turret;
+            Quaternion turretRotation = Quaternion.LookRotation(destPos - turret.position);
+            turret.rotation = Quaternion.Slerp(turret.rotation, turretRotation, Time.deltaTime * curRotSpeed);
 
-        //Shoot bullet towards the player
-        npc.GetComponent<NPCTankController>().ShootBullet();
+            //Shoot bullet towards the player
+            npc.GetComponent<NPCTankController>().ShootBullet();
+        }
     }
 }

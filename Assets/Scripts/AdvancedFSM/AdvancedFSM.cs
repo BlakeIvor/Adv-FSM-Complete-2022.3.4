@@ -23,6 +23,7 @@ public enum Transition
     ReachNinjaCamp,
     ReturnToDuty,
     GoOffDuty,
+    CamoAttack,
 }
 
 public enum FSMStateID
@@ -134,7 +135,7 @@ public class AdvancedFSM : FSM
         FSMStateID id = currentState.GetOutputState(trans);
         if (id == FSMStateID.None)
         {
-            Debug.LogError("FSM ERROR: Current State does not have a target state for this transition");
+            Debug.LogError("FSM ERROR: Current State" + id + "does not have a target state for this transition");
             return;
         }
 

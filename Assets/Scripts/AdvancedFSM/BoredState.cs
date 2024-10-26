@@ -44,6 +44,7 @@ public class BoredState : FSMState
         }
         else if (boredTimer <= 0)
         {
+            
             npc.GetComponent<NPCTankController>().SetTransition(Transition.LostPlayer);
             timerStart = false;
         }

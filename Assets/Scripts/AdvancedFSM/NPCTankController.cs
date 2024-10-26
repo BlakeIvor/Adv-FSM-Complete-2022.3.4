@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class NPCTankController : AdvancedFSM 
 {
@@ -9,9 +10,12 @@ public class NPCTankController : AdvancedFSM
     public float healthScale;
     public bool inChargingArea = false;
     public float groundCheckDistance = 5f;
+    public Text damageText;
+    public bool isFastClass = false;
 
 
     [SerializeField] Material material1, material2, material3, material4, material5, material6, material7;
+    [SerializeField] Sprite fastClassBadge, regularClassBadge;
 
 
     Transform restPoint;
@@ -51,6 +55,18 @@ public class NPCTankController : AdvancedFSM
         turret = gameObject.transform.GetChild(0).transform;
         bulletSpawnPoint = turret.GetChild(0).transform;
 
+        float randNum = Random.Range(0.0f, 1.0f);
+        if (randNum <= 0.5f)
+        {
+            isFastClass = true;
+            gameObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = fastClassBadge;
+        }
+        else
+        {
+            isFastClass = false;
+            gameObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = regularClassBadge;
+        }
+
         //Start Doing the Finite State Machine
         ConstructFSM();
     }
@@ -88,7 +104,8 @@ public class NPCTankController : AdvancedFSM
             case FSMStateID.Resting:
                 GetComponent<Renderer>().material = material7;
                 break;
-
+            case FSMStateID.Camo:
+                break;
         }
         
 
@@ -143,6 +160,7 @@ public class NPCTankController : AdvancedFSM
         attack.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
         attack.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         attack.AddTransition(Transition.LowHealth, FSMStateID.Resting);
+        attack.AddTransition(Transition.CamoAttack, FSMStateID.Camo);
 
         DeadState dead = new DeadState();
         dead.AddTransition(Transition.NoHealth, FSMStateID.Dead);
@@ -171,6 +189,11 @@ public class NPCTankController : AdvancedFSM
         offduty.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         offduty.AddTransition(Transition.LowHealth, FSMStateID.Resting);
 
+        CamoState camo = new CamoState(this.transform);
+        camo.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        camo.AddTransition(Transition.LowHealth, FSMStateID.Resting);
+        camo.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
+
         AddFSMState(patrol);
         AddFSMState(chase);
         AddFSMState(attack);
@@ -179,6 +202,7 @@ public class NPCTankController : AdvancedFSM
         AddFSMState(bored);
         AddFSMState(camp);
         AddFSMState(offduty);
+        AddFSMState(camo);
     }
 
     /// <summary>
@@ -202,18 +226,56 @@ public class NPCTankController : AdvancedFSM
         //Reduce health
         else if (collision.gameObject.tag == "Bullet" && !(Vector3.Distance(transform.position, restPoint.position) < 100f && this.CurrentStateID == FSMStateID.Resting))
         {
-            Debug.Log("hit");
-            health -= 50;
-
-            if (health <= 0)
+            if (this.CurrentStateID == FSMStateID.Camo)
             {
-                Debug.Log("Switch to Dead State");
-                SetTransition(Transition.NoHealth);
-                Explode();
-            }else if(health < 100 && RestingState.remainingRests > 0){
-                RestingState.remainingRests--;
-                Debug.Log("Switch to Resting State");
-                SetTransition(Transition.LowHealth);
+                float randNum = Random.Range(0.0f, 1.0f);
+                if (randNum <= 0.3f)
+                {
+                    damageText.text = "dodged";
+                    StartCoroutine(DamageTextTimer());
+                }
+                else
+                {
+                    damageText.text = "50";
+                    StartCoroutine(DamageTextTimer());
+                    health -= 50;
+
+                    if (health <= 0)
+                    {
+                        Debug.Log("Switch to Dead State");
+                        this.GetComponent<MeshRenderer>().enabled = true;
+                        turret.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                        healthBar.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                        SetTransition(Transition.NoHealth);
+                        Explode();
+                    }
+                    else if(health < 100 && RestingState.remainingRests > 0){
+                        RestingState.remainingRests--;
+                        this.GetComponent<MeshRenderer>().enabled = true;
+                        turret.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                        healthBar.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                        Debug.Log("Switch to Resting State");
+                        SetTransition(Transition.LowHealth);
+                    }
+                }
+            }
+            else
+            {
+                damageText.text = "50";
+                StartCoroutine(DamageTextTimer());
+                health -= 50;
+
+                if (health <= 0)
+                {
+                    Debug.Log("Switch to Dead State");
+                    SetTransition(Transition.NoHealth);
+                    Explode();
+                }
+                else if(health < 100 && RestingState.remainingRests > 0){
+                    RestingState.remainingRests--;
+                    Debug.Log("Switch to Resting State");
+                    SetTransition(Transition.LowHealth);
+                }
             }
         }
     }
@@ -238,11 +300,33 @@ public class NPCTankController : AdvancedFSM
     {
         if (elapsedTime >= shootRate)
         {
-            Debug.Log("PEW");
+            float randNum = Random.Range(0.0f, 1.0f);
+            if (isFastClass && randNum <= 0.6f)
+            {
+                StartCoroutine(RapidFire(3));
+                
+            }
+            else if (!isFastClass && randNum <= 0.2f)
+            {
+                StartCoroutine(RapidFire(3));
+            }
             Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
             elapsedTime = 0.0f;
         }
     }
 
-    
+    private IEnumerator DamageTextTimer()
+    {
+        yield return new WaitForSeconds(1.0f);
+        damageText.text = "";
+    }
+
+    private IEnumerator RapidFire(int shots)
+    {
+        for (int i = 0; i < shots; i++)
+        {
+            yield return new WaitForSeconds(0.2f);
+            Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+        }
+    }
 }
