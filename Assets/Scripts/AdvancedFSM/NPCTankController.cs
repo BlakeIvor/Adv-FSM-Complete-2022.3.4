@@ -11,8 +11,7 @@ public class NPCTankController : AdvancedFSM
     public bool inChargingArea = false;
     public float groundCheckDistance = 5f;
     public Text damageText;
-    public bool isFastClass = false;
-
+    public TankRank myRank;
 
     [SerializeField] Material material1, material2, material3, material4, material5, material6, material7;
     [SerializeField] Sprite fastClassBadge, regularClassBadge;
@@ -55,16 +54,20 @@ public class NPCTankController : AdvancedFSM
         turret = gameObject.transform.GetChild(0).transform;
         bulletSpawnPoint = turret.GetChild(0).transform;
 
+        myRank = GetComponent<TankRank>();
+
         float randNum = Random.Range(0.0f, 1.0f);
         if (randNum <= 0.5f)
         {
-            isFastClass = true;
+            myRank.rankName = TankRank.Rank.Fast;
             gameObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = fastClassBadge;
+            this.GetComponent<Sight>().enabled = true;
         }
         else
         {
-            isFastClass = false;
+            myRank.rankName = TankRank.Rank.Regular;
             gameObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = regularClassBadge;
+            this.GetComponent<Touch>().enabled = true;
         }
 
         //Start Doing the Finite State Machine
@@ -301,12 +304,12 @@ public class NPCTankController : AdvancedFSM
         if (elapsedTime >= shootRate)
         {
             float randNum = Random.Range(0.0f, 1.0f);
-            if (isFastClass && randNum <= 0.6f)
+            if (myRank.rankName == TankRank.Rank.Fast && randNum <= 0.6f)
             {
                 StartCoroutine(RapidFire(3));
                 
             }
-            else if (!isFastClass && randNum <= 0.2f)
+            else if (myRank.rankName == TankRank.Rank.Regular && randNum <= 0.2f)
             {
                 StartCoroutine(RapidFire(3));
             }
