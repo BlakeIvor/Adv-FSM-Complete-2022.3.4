@@ -9,6 +9,8 @@ public class Sight : Sense
     private Transform playerTrans;
     private Vector3 rayDirection;
 
+    [SerializeField] GameObject detectedUI;
+
     protected override void Initialise() 
     {
         //set the value for the player transform -- playerTrans is the var name
@@ -47,13 +49,21 @@ public class Sight : Sense
                     //Check the aspect
                     if (hit.collider.gameObject.tag == "Player")
                     {
-                        //now console out -- Enemy Detected!
-                        Debug.Log("Player Detected");
+                        detectedUI.SetActive(true);
                     }
+                    else
+                    {
+                        detectedUI.SetActive(false);
+                    }
+                }
+                else
+                {
+                    detectedUI.SetActive(false);
                 }
             }
 
-        } // end if angle between our AI-forward and player is within field of view
+        } 
+        // end if angle between our AI-forward and player is within field of view
     } //end detectaspect
 
     /// <summary>

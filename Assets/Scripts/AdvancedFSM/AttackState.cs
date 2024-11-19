@@ -21,7 +21,6 @@ public class AttackState : FSMState
         if (!decidedAttack)
         {
             float randNum = Random.Range(0.0f, 1.0f);
-            Debug.Log(npc.gameObject + ": rolled " + randNum);
             if (randNum <= (1.0f - npc.parent.childCount/5.0f))
             {
                 npc.GetComponent<NPCTankController>().SetTransition(Transition.CamoAttack);

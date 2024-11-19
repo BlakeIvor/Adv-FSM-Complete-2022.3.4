@@ -124,4 +124,9 @@ public class PlayerTankController : MonoBehaviour
             }
         }
     }
+
+    public float getCurrSpeed()
+    {
+        return curSpeed;
+    }
 }

@@ -3,12 +3,19 @@ using System.Collections;
 
 public class Touch : Sense
 {
+    [SerializeField] GameObject detectedUI;
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("Player Detected");
+            detectedUI.SetActive(true);
         }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        detectedUI.SetActive(false);
     }
 
 
